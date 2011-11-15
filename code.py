@@ -14,10 +14,11 @@ from model import ImageDB
 
 # 链接设置
 urls = (
-        '', 'Index',
-        '/upload/', 'Upload',
-        '/(\d+)/', 'View',
-        '/delete/(\d+)/', 'Delete',
+        '', 'Index', # 首页
+        '/upload/', 'Upload', # 上传页面
+        '/(\d+)/', 'View', # 图片页面
+        '/delete/(\d+)/', 'Delete', # 删除图片
+        '/random/', 'Random', # 随机图片
         )
 
 # 模板
@@ -71,12 +72,12 @@ class Upload(object):
         orig_link = post_data['orig-link']
         up_user = post_data['up-user']
         # 获取最后一个图片的id
-        image_id = ImageDB.get_image_id().maxid
+        image_id = ImageDB().get_image_id().maxid
         if image_id is None:
             image_id = 0
         # print image_id
         # 添加图片信息到数据库
-        ImageDB.add_image(image_path, des, orig_des, orig_link, up_user)
+        ImageDB().add_image(image_path, des, orig_des, orig_link, up_user)
         # 刚才添加的图片的id
         image_id += 1
         return render.upload('/'+ str(image_id) +'/')
@@ -91,9 +92,9 @@ class View(object):
         image_id = int(image_id)
         print image_id
         # 获取图片信息
-        image_info = ImageDB.get_image_info(image_id)
+        image_info = ImageDB().get_image_info(image_id)
         # 获取上一个及下一个图片的id
-        image_next = ImageDB.get_image_next(image_id)
+        image_next = ImageDB().get_image_next(image_id)
         # print image_info
         # print image_next
         # 如果id不存在
