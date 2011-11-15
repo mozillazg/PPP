@@ -78,9 +78,11 @@ class ImageDB(object):
     def update_visit(self, image_id):
         """访问数
         """
-        self.db.query('update image set visit=visit+1 where image_id=$image_id')
+        self.db.query('update image set visit=visit+1 where image_id=$image_id',
+                        vars=locals())
     def update_like(self, image_id):
         """喜爱数
         """
-        self.db.query('update image set like=like+1 where image_id=$image_id')
+        self.db.query('update image set like=like+1 where image_id=$image_id',
+                        vars=locals())
 
