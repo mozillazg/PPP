@@ -19,22 +19,29 @@ class ImageDB(object):
     def __init__(self):
         self.db = web.database(dbn='postgres', db='ppp',
                                 user='postgres', pw='py')
-
+    
+    @staticmethod
     def get_all_new(self, limit=10):
         """最新图片
         """
         return self.db.select('image', limit=limit,
                                 order='image_id desc')
+    
+    @staticmethod
     def get_all_hot(self, limit=5):
         """最热图片
         """
         return self.db.select('image', limit=limit,
                                 order='visit desc')
+    
+    @staticmethod
     def get_all_like(self, limit=5):
         """最受欢迎图片
         """
         return self.db.select('image', limit=limit,
                                 order='like desc')
+    
+    @staticmethod
     def get_image_info(self, image_id):
         """图片信息
         """
@@ -43,7 +50,8 @@ class ImageDB(object):
                                 vars=locals())[0]
         except IndexError:
             return None
-
+    
+    @staticmethod
     def get_image_next(self, image_id):
         """相邻图片
         """
@@ -60,12 +68,14 @@ class ImageDB(object):
         except IndexError:
             after = web.storage({})
         return web.storage({'before': before, 'after': after})
-
+    
+    @staticmethod
     def get_image_id(self):
         """获取最后上传的图片的id
         """
         return self.db.query('select max(image_id) as maxid from image')[0]
-
+    
+    @staticmethod
     def add_image(self, image_path, image_description,
             orig_description, orig_link, up_user=''):
         """添加图片
@@ -74,15 +84,17 @@ class ImageDB(object):
                 image_description = image_description,
                 orig_description = orig_description,
                 orig_link = orig_link, up_user = up_user)
-
+    
+    @staticmethod
     def update_visit(self, image_id):
         """访问数
         """
         self.db.query('update image set visit=visit+1 where image_id=$image_id',
                         vars=locals())
+    
+    @staticmethod
     def update_like(self, image_id):
         """喜爱数
         """
         self.db.query('update image set like=like+1 where image_id=$image_id',
                         vars=locals())
-

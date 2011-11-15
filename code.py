@@ -28,6 +28,7 @@ class Upload(object):
     """
     def GET(self):
         return render.upload()
+        
     def save_file(self, filedir, filename, content):
         """保存文件
         """
@@ -50,36 +51,52 @@ class Upload(object):
         return filename
 
     def POST(self):
+        """处理发送过来的表单数据
+        """
         post_data = web.input(upfile={})
+        # 图片保存目录
         filedir = 'static'
         # print post_data
         # print post_data.imgfile.filename
+        # 文件路径
         filepath = post_data['upfile'].filename.replace('\\', '/')
+        # 文件名称
         filename = filepath.split('/')[-1]
+        # 文件内容
         image_content = post_data['upfile'].file.read()
+        # 保存后的图片路径
         image_path = '/' + self.save_file(filedir, filename, image_content)
         des = post_data['description']
         orig_des = post_data['orig-description']
         orig_link = post_data['orig-link']
         up_user = post_data['up-user']
-        image_id = ImageDB().get_image_id().maxid
+        # 获取最后一个图片的id
+        image_id = ImageDB.get_image_id().maxid
         if image_id is None:
             image_id = 0
         # print image_id
-        ImageDB().add_image(image_path, des, orig_des, orig_link, up_user)
+        # 添加图片信息到数据库
+        ImageDB.add_image(image_path, des, orig_des, orig_link, up_user)
+        # 刚才添加的图片的id
         image_id += 1
         return render.upload('/'+ str(image_id) +'/')
+
 
 class View(object):
     """查看图片
     """
     def GET(self, image_id=0):
+        """GET method
+        """
         image_id = int(image_id)
         print image_id
-        image_info = ImageDB().get_image_info(image_id)
-        image_next = ImageDB().get_image_next(image_id)
+        # 获取图片信息
+        image_info = ImageDB.get_image_info(image_id)
+        # 获取上一个及下一个图片的id
+        image_next = ImageDB.get_image_next(image_id)
         # print image_info
         # print image_next
+        # 如果id不存在
         if image_info is None:
             return web.notfound()
         return render.photo(image_info, image_next)
