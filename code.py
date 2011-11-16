@@ -73,20 +73,21 @@ class Upload(object):
         up_user = post_data['up-user']
         # 获取最后一个图片的id
         image_id = ImageDB().get_image_id().maxid
-        if image_id is None:
-            image_id = 0
-        # print image_id
         # 添加图片信息到数据库
         ImageDB().add_image(image_path, des, orig_des, orig_link, up_user)
         # 刚才添加的图片的id
-        image_id += 1
+        if image_id is None:
+            image_id = ImageDB().get_image_id().maxid
+        else:
+            image_id += 1
+        # print image_id
         return render.upload('/'+ str(image_id) +'/')
 
 
 class View(object):
     """查看图片
     """
-    def GET(self, image_id=0):
+    def GET(self, image_id):
         """GET method
         """
         image_id = int(image_id)
@@ -95,12 +96,25 @@ class View(object):
         image_info = ImageDB().get_image_info(image_id)
         # 获取上一个及下一个图片的id
         image_next = ImageDB().get_image_next(image_id)
+        image_more = ImageDB().get_all(limit=3)
         # print image_info
         # print image_next
         # 如果id不存在
         if image_info is None:
             return web.notfound()
-        return render.photo(image_info, image_next)
+        else:
+            ImageDB().update_visit(image_id)
+        return render.photo(image_info, image_next, image_more)
+
+
+class Random(object):
+    """随机图片id
+    """
+    def GET(self):
+        random_id = ImageDB().get_all(limit=1)[0].image_id
+        print random_id
+        web.seeother('/' + str(random_id) + '/')
+
 
 app = web.application(urls, globals())
 

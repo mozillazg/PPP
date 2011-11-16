@@ -20,12 +20,12 @@ class ImageDB(object):
         self.db = web.database(dbn='postgres', db='ppp',
                                 user='postgres', pw='py')
     
-    def get_all(self, limit=5):
-        from random import randint
-        all_id = self.db.select('image', what='image_id')
-        ids = [a for x in range(limit) b = randint(0, len(all_id)-1) a = all_id[b] all_id.remove(b) ]
-
-
+    def get_all(self, limit=3):
+        """随机图片
+        """
+        from random import sample
+        all_id = self.db.select('image')
+        return sample(all_id, limit) # 随机获取 limit 个元素
 
     def get_all_new(self, limit=10):
         """最新图片
