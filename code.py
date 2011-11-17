@@ -36,20 +36,29 @@ class Upload(object):
         import os
         import time
         import random
+        import StringIO
+
+        import Image
+
+        # 略缩图大小
+        size = (75, 75)
         #文件目录
         # fd = os.path.realpath(filedir)
         #文件扩展名
         ext = os.path.splitext(filename)[1]
         #定义文件名，年月日时分秒随机数
         fn = time.strftime('%Y%m%d%H%M%S')
-        fn = fn + '_%d' % random.randint(0, 100)
+        fn = fn + '%d' % random.randint(0, 100)
         #重写合成文件名
         # filename = os.path.join(fd, fn + ext)
         filename = filedir + '/' + fn + ext
-        fout = open(filename, 'wb')
-        fout.write(content)
-        fout.close()
-        return filename
+        thumb_name = filedir + '/thumb/' + fn + ext
+        with open(filename, 'wb') as fout:
+            fout.write(content)
+        im = Image.open(StringIO.StringIO(content))
+        im.thumbnail(size)
+        im.save(thumb_name, im.format)
+        return (filename, thumb_name)
 
     def POST(self):
         """处理发送过来的表单数据
@@ -65,16 +74,20 @@ class Upload(object):
         filename = filepath.split('/')[-1]
         # 文件内容
         image_content = post_data['upfile'].file.read()
+        # save_path = self.save_file(filedir, filename, image_content)
         # 保存后的图片路径
-        image_path = '/' + self.save_file(filedir, filename, image_content)
-        des = post_data['description']
+        image_path, thumb_path = self.save_file(filedir, filename,
+                image_content)
+        # image_path = '/' + save_path[0]
+        # thumb_path = '/' + save_path[1]
+        # des = post_data['description']
         orig_des = post_data['orig-description']
         orig_link = post_data['orig-link']
         up_user = post_data['up-user']
         # 获取最后一个图片的id
         image_id = ImageDB().get_image_id().maxid
         # 添加图片信息到数据库
-        ImageDB().add_image(image_path, des, orig_des, orig_link, up_user)
+        ImageDB().add_image(image_path, orig_des, orig_link,thumb_path, up_user)
         # 刚才添加的图片的id
         if image_id is None:
             image_id = ImageDB().get_image_id().maxid

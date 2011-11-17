@@ -25,7 +25,10 @@ class ImageDB(object):
         """
         from random import sample
         all_id = self.db.select('image')
-        return sample(all_id, limit) # 随机获取 limit 个元素
+        if len(all_id) <= limit:
+            return all_id
+        else:
+            return sample(all_id, limit) # 随机获取 limit 个元素
 
     def get_all_new(self, limit=10):
         """最新图片
@@ -76,14 +79,11 @@ class ImageDB(object):
         """
         return self.db.query('select max(image_id) as maxid from image')[0]
     
-    def add_image(self, image_path, image_description,
-            orig_description, orig_link, up_user=''):
+    def add_image(self, img, description, link, thumb, user=''):
         """添加图片
         """
-        self.db.insert('image', image_path=image_path,
-                image_description=image_description,
-                orig_description=orig_description,
-                orig_link=orig_link, up_user=up_user)
+        self.db.insert('image', img=img, description=description,
+                link=link, thumb=thumb, username=user)
     
     def update_visit(self, image_id):
         """访问数
@@ -96,3 +96,11 @@ class ImageDB(object):
         """
         self.db.query('update image set like=like+1 where image_id=$image_id',
                         vars=locals())
+
+    def delete_image(self, image_id):
+        """删除图片
+        """
+        import os
+        image_info = get_image_info(image_id)
+        # TODO 删除数据库记录及系统中保存的图片
+        # os.remove
