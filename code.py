@@ -14,7 +14,7 @@ from model import ImageDB
 
 # 链接设置
 urls = (
-        '', 'Index', # 首页
+        '/', 'Index', # 首页
         '/upload/', 'Upload', # 上传页面
         '/(\d+)/', 'View', # 图片页面
         '/delete/(\d+)/', 'Delete', # 删除图片
@@ -23,6 +23,17 @@ urls = (
 
 # 模板
 render = web.template.render('templates', base='base')
+
+
+class Index(object):
+    """首页
+    """
+    def GET(self):
+        news = ImageDB().get_all_new(limit=10)
+        hots = ImageDB().get_all_hot(limit=5)
+        likes = ImageDB().get_all_like(limit=5)
+        return render.index(news, hots, likes)
+
 
 class Upload(object):
     """上传页面
@@ -53,10 +64,24 @@ class Upload(object):
         # filename = os.path.join(fd, fn + ext)
         filename = filedir + '/' + fn + ext
         thumb_name = filedir + '/thumb/' + fn + ext
+        if not os.path.isdir(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
+        if not os.path.isdir(os.path.dirname(thumb_name)):
+            os.makedirs(os.path.path.dirname(thumb_name))
         with open(filename, 'wb') as fout:
             fout.write(content)
         im = Image.open(StringIO.StringIO(content))
-        im.thumbnail(size)
+        x, y = im.size
+        rex = 75
+        rey = 75
+        print x, y
+        x, y = (rex, (float(rex)/x)*y) # 等比例缩放后的尺寸
+        print x, y
+        if rey > y:
+            rey = int(y)
+        im.thumbnail((x, y))
+        box = (0, 0, rex, rey)
+        im = im.crop(box) # 剪切
         im.save(thumb_name, im.format)
         return (filename, thumb_name)
 
@@ -127,6 +152,14 @@ class Random(object):
         random_id = ImageDB().get_all(limit=1)[0].image_id
         print random_id
         web.seeother('/' + str(random_id) + '/')
+
+
+class Delete(object):
+    """删除图片
+    """
+    def GET(self, image_id):
+        ImageDB().delete_image(image_id)
+        web.seeother('/' + str(image_id) + '/')
 
 
 app = web.application(urls, globals())

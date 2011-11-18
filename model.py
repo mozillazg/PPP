@@ -46,7 +46,7 @@ class ImageDB(object):
         """最受欢迎图片
         """
         return self.db.select('image', limit=limit,
-                                order='like desc')
+                                order='likes desc')
     
     def get_image_info(self, image_id):
         """图片信息
@@ -94,13 +94,21 @@ class ImageDB(object):
     def update_like(self, image_id):
         """喜爱数
         """
-        self.db.query('update image set like=like+1 where image_id=$image_id',
+        self.db.query('update image set likes=likes+1 where image_id=$image_id',
                         vars=locals())
 
     def delete_image(self, image_id):
         """删除图片
         """
         import os
-        image_info = get_image_info(image_id)
-        # TODO 删除数据库记录及系统中保存的图片
-        # os.remove
+        image_info = self.db.select('image', where='image_id=$image_id',
+                                vars=locals())[0]
+        if image_info is not None:
+            img_path = image_info.img
+            thumb_path = image_info.thumb
+            if os.path.isfile(img_path):
+                os.remove(img_path)
+            if os.path.isfile(thumb_path):
+                os.remove(thumb_path)
+            self.db.delete('image', where="image_id=$image_id",
+                    vars=locals())

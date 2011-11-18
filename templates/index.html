@@ -1,4 +1,4 @@
-
+$def with(news, hots, likes)
 
 <div id="main">
     <div id="photo-main">
@@ -7,8 +7,9 @@
         </div>
         <div class="fixed"></div>
         <div class="images">
+        $for new in news:
             <div class="image-list">
-                <a href=""><img src="" title="" /></a>
+                <a href="/$new.image_id/"><img src="$new.img" title="$new.img" /></a>
             </div>
         </div>
     </div>
