@@ -1,17 +1,63 @@
 $def with(news, hots, likes)
 
+<style type="text/css">
+
+.image-list { padding-top: 5px; overflow: hidden; }
+li.image-list-item { margin: 5px 36px 10px 0px; overflow-x: hidden; }
+.image-list li.image-list-item { float: left; min-height: 79px; text-align: center; }
+#view-photo-main { float: left; width: 620px; text-align: left; margin: 5px 0pt 0pt; }
+.photo-main {
+  margin-bottom: 20px;
+}
+
+</style>    
+
+
 <div id="main">
-    <div id="photo-main">
+    <div id="view-photo-main">
         <div class="photo-main-title">
             最新美丽人物 <a href="/random/">随便看看</a>
         </div>
         <div class="fixed"></div>
-        <div class="images">
-        $for new in news:
-            <div class="image-list">
-                <a href="/$new.image_id/"><img src="$new.img" title="$new.img" /></a>
-            </div>
+        <div class="photo-main">
+    <ul class="image-list">
+    $for new in news:
+        <li class="image-list-item">
+        <div>
+            <a href="/$new.image_id/"><img src="$new.thumb" title="$new.thumb" /></a>
         </div>
+        </li>
+    </ul>
+    <div class="fixed"></div>
+        <div class="photo-main-title">
+            最热美丽人物 <a href="/random/">随便看看</a>
+        </div>
+        <div class="fixed"></div>
+        <div class="photo-main">
+    <ul class="image-list">
+    $for hot in hots:
+        <li class="image-list-item">
+        <div>
+            <a href="/$hot.image_id/"><img src="$hot.thumb" title="$hot.thumb" /></a>
+        </div>
+        </li>
+    </ul>
+    <div class="fixed"></div>
+        <div class="photo-main-title">
+            最受欢迎美丽人物 <a href="/random/">随便看看</a>
+        </div>
+        <div class="fixed"></div>
+        <div class="photo-main">
+    <ul class="image-list">
+    $for like in likes:
+        <li class="image-list-item">
+        <div>
+            <a href="/$like.image_id/"><img src="$like.thumb" title="$like.thumb" /></a>
+        </div>
+        </li>
+    </ul>
+    <div class="fixed"></div>
+
     </div>
     <div id="photo-side">
 
