@@ -19,6 +19,7 @@ urls = (
         '/(\d+)/', 'View', # 图片页面
         '/delete/(\d+)/', 'Delete', # 删除图片
         '/random/', 'Random', # 随机图片
+        '/login/', 'Login', # 登录
         )
 
 # 模板
@@ -29,6 +30,8 @@ class Index(object):
     """首页
     """
     def GET(self):
+        """GET
+        """
         news = ImageDB().get_all_new(limit=10)
         hots = ImageDB().get_all_hot(limit=5)
         likes = ImageDB().get_all_like(limit=5)
@@ -39,6 +42,8 @@ class Upload(object):
     """上传页面
     """
     def GET(self):
+        """GET
+        """
         return render.upload()
         
     def save_file(self, filedir, filename, content):
@@ -109,15 +114,10 @@ class Upload(object):
         orig_des = post_data['orig-description']
         orig_link = post_data['orig-link']
         up_user = post_data['up-user']
-        # 获取最后一个图片的id
-        image_id = ImageDB().get_image_id().maxid
         # 添加图片信息到数据库
         ImageDB().add_image(image_path, orig_des, orig_link,thumb_path, up_user)
         # 刚才添加的图片的id
-        if image_id is None:
-            image_id = ImageDB().get_image_id().maxid
-        else:
-            image_id += 1
+        image_id = ImageDB().get_image_id().maxid
         # print image_id
         return render.upload('/'+ str(image_id) +'/')
 
@@ -149,6 +149,8 @@ class Random(object):
     """随机图片id
     """
     def GET(self):
+        """GET
+        """
         random_id = ImageDB().get_all(limit=1)[0].image_id
         print random_id
         web.seeother('/' + str(random_id) + '/')
@@ -158,9 +160,24 @@ class Delete(object):
     """删除图片
     """
     def GET(self, image_id):
+        """GET
+        """
         ImageDB().delete_image(image_id)
-        web.seeother('/' + str(image_id) + '/')
+        # web.seeother('/' + str(image_id) + '/')
+        web.seeother('/')
 
+
+class Login(object):
+    """用户登录
+    """
+    def GET(self):
+        """GET
+        """
+    
+    def POST(self):
+        """POST method
+        """
+    
 
 app = web.application(urls, globals())
 

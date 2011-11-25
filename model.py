@@ -112,3 +112,51 @@ class ImageDB(object):
                 os.remove(thumb_path)
             self.db.delete('image', where="image_id=$image_id",
                     vars=locals())
+
+
+class UserDB(object):
+    """操作用户信息数据库
+    """
+    def __init__(self):
+        self.db = web.database(dbn='postgres', db='ppp',
+                                user='postgres', pw='py')
+    
+    def verify_user(self, username, password):
+        """用户验证
+        """
+        return self.db.select('user_', what="user_id"
+                    where='user_name=$username and \
+                    user_pass=$password', vars=locals())[0]
+    
+    def add_user(self, user_info):
+        """添加用户
+        """
+        pass
+    
+    def del_user(self, user_id):
+        """删除用户
+        """
+        pass
+    
+    def update_user(self, user_info):
+        """更新用户
+        """
+        pass
+
+
+class Encrypt(object):
+    """
+    """
+    def __init__(self):
+        pass
+    
+    def encrypt_pass(self):
+        """
+        """
+        pass
+    
+    def encrypt_cookie(self):
+        """
+        """
+        pass
+    

@@ -1,5 +1,28 @@
 $def with(image, next, more)
 
+<style type="text/css">
+
+#view-photo-main { float: left; width: 620px; text-align: left; margin: 5px 0pt 0pt; }
+#photo-controls { float: left;}
+#view-photo-sidebar {float: left; text-align: left; width: 300px;}
+#photo {
+    margin-bottom: 20px;
+    text-align: center;
+}
+#view-photo-caption {
+    padding-bottom: 0;
+    padding-left: 7px;
+    padding-right: 0;
+    padding-top: 7px;
+    text-align: left;
+}
+
+img#photo-display.photo-large {
+    max-width: 560px;
+}
+
+</style>    
+
 <div id="main">
     <div id="view-photo-main">
         <div id="photo-controls">
@@ -11,8 +34,7 @@ $def with(image, next, more)
                     <a href="/$before.image_id/">上一张</a> |
                 $if after:
                     <a href="/$after.image_id/">下一张</a> | 
-                <a href="/random/">随机美女</a> | 
-                <!--<a href="http://s.click.taobao.com/t_8?e=7HZ6jHSTb0K5ud242%2FS4f2abwXnirOid9nQjPKV%2Figty&amp;p=mm_14164417_0_0" onclick="">USB电扇</a>-->
+                <a href="/random/">随机美女</a> | <a href="/delete/image.image_id/">删除当前图片</a>
             </div>
         </div>
         <div style="clear:both;"></div>
@@ -29,27 +51,30 @@ $def with(image, next, more)
             <div id="photo-info">
                 <div>$image.description……</div>
                 <div>发布者 <a class="nav" target="_blank">$image.username </a></div> 
-                <div>原始地址: <a href="$image.link" target="_blank">点击前往</a></div> </div><div style="clear:both;"></div></div>
+                <div>原始地址: <a href="$image.link" target="_blank">点击前往</a></div>
+            </div>
+        </div>
+        <div style="clear:both;"></div>
         <div style="margin:10px;" id="view-photo-ad">
-	<script type="text/JavaScript" language="javascript">&lt;!--
-
-/* Script removed by snapshot save */
-
---&gt;</script> 
-	<script src="$1" language="javascript"></script>
         </div>
         <div id="view-photo-more">
-            <div style="padding-bottom:5px">
+            <!--<div style="padding-bottom:5px">
                 <ul>
-                    <li><a href="http://pp-person.appspot.com/19191682">下平静香</a></li>
-                    <li><a href="http://pp-person.appspot.com/19191228">吕瑶门 twitter</a></li>
-                </ul></div>
-                <div style="padding-bottom:5px;">
-                    <b>更多美丽人物</b></div>
+                    <li><a href=""></a></li>
+                </ul>
+            </div>-->
+            <div style="padding-bottom:5px;">
+                    <b>更多美丽人物</b>
+                    <div style="clear:both;"></div>
                 $for img in more:
                     $ src = '/' + img.thumb
                     <a href="/$img.image_id/"><img height="75" width="75" src="$src" class="photo-mini" title="$src"></a>
-                </div>
-                <div id="view-photo-views">
-                <div style="font-size:14px;"><b>被围观了</b> $image.visit <b>次</b></div> <div style="font-size:14px;"><b>有<b> $image.likes <b>人喜欢</b></b></b></div></div><b><b> </b></b></div>
+            </div>
+            <div id="view-photo-views">
+                <div style="font-size:14px;"><b>被围观了</b> $image.visit <b>次</b></div> 
+                <div style="font-size:14px;"><b>有</b> $image.likes <b>人喜欢</b></div>
+            </div>
+        </div>
+    </div>
+</div>
 
