@@ -20,7 +20,7 @@ class ImageDB(object):
         self.db = web.database(dbn='postgres', db='ppp',
                                 user='postgres', pw='py')
     
-    def get_all(self, limit=3):
+    def get_random(self, limit=3):
         """随机图片
         """
         from random import sample
@@ -124,10 +124,13 @@ class UserDB(object):
     def verify_user(self, username, password):
         """用户验证
         """
-        return self.db.select('user_', what="user_id"
-                    where='user_name=$username and \
-                    user_pass=$password', vars=locals())[0]
-    
+        # where_dict = {'user_name': username, 'user_pass': password}
+        # return self.db.select('user_', what="user_id",
+                    # where=web.db.sqlwhere(where_dict), vars=locals())[0]
+        return self.db.select('user_', what='user_id',
+                where = 'user_name=$username and user_pass=$password',
+                vars = locals())[0]
+
     def add_user(self, user_info):
         """添加用户
         """

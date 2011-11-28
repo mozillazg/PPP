@@ -11,6 +11,7 @@ if sys.getdefaultencoding() != 'utf-8':
 
 import web
 from model import ImageDB
+from model import UserDB
 
 # 链接设置
 urls = (
@@ -20,10 +21,33 @@ urls = (
         '/delete/(\d+)/', 'Delete', # 删除图片
         '/random/', 'Random', # 随机图片
         '/login/', 'Login', # 登录
+        '/logout/', 'Logout', # 退出
         )
 
 # 模板
 render = web.template.render('templates', base='base')
+# web.config.debug = False
+# t_globals = {
+    # 'session': session,
+    # 'logged': logged(),
+# }
+
+app = web.application(urls, globals())
+
+# 调试模式下使用 session
+if web.config.get('_session') is None:
+    session = web.session.Session(app, web.session.DiskStore('sessions'), {'login': 0})
+    web.config._session = session
+else:
+    session = web.config._session
+
+def logged():
+    """根据 session 判断是否登录
+    """
+    if session.login == 1:
+        return True
+    else:
+        return False
 
 
 class Index(object):
@@ -134,7 +158,7 @@ class View(object):
         image_info = ImageDB().get_image_info(image_id)
         # 获取上一个及下一个图片的id
         image_next = ImageDB().get_image_next(image_id)
-        image_more = ImageDB().get_all(limit=3)
+        image_more = ImageDB().get_random(limit=3)
         # print image_info
         # print image_next
         # 如果id不存在
@@ -151,7 +175,7 @@ class Random(object):
     def GET(self):
         """GET
         """
-        random_id = ImageDB().get_all(limit=1)[0].image_id
+        random_id = ImageDB().get_random(limit=1)[0].image_id
         print random_id
         web.seeother('/' + str(random_id) + '/')
 
@@ -173,13 +197,35 @@ class Login(object):
     def GET(self):
         """GET
         """
+        if logged():
+            web.seeother('/')
+        else:
+            return render.login()
+
     
     def POST(self):
         """POST method
         """
-    
+        user, passwd = web.input().user, web.input().passwd
+        ident = UserDB().verify_user(user, passwd)
+        if ident:
+            session.login = 1
+            web.seeother('/')
+            # return 'ok'
+        else:
+            # session.login = 0
+            render.login()
 
-app = web.application(urls, globals())
+
+
+class Logout(object):
+    """退出登录
+    """
+    def GET(self):
+        session.login=0
+        session.kill()
+        web.seeother('/')
+
 
 if __name__ == '__main__':
     app.run()
