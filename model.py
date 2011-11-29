@@ -24,11 +24,27 @@ class ImageDB(object):
         """随机图片
         """
         from random import sample
-        all_id = self.db.select('image')
-        if len(all_id) <= limit:
-            return all_id
+        # 以下适用于少量数据
+        # all_id = self.db.select('image')
+        # if len(all_id) <= limit:
+            # return all_id
+        # else:
+            # return sample(all_id, limit) # 随机获取 limit 个元素
+        # 大量数据
+        count_id = self.db.select('image', what='count(image_id) as count')[0].count
+        if count_id <= limit:
+            return self.db.select('image')
         else:
-            return sample(all_id, limit) # 随机获取 limit 个元素
+            # randoms = []
+            # 利用 offset 和 limit 取得第 n 条数据
+            # for id_ in sample(xrange(count_id), limit):
+                # random_ = self.db.select('image', order='image_id desc',
+                                # offset='$id_', limit=1, vars=locals())[0]
+                # randoms.append(random_)
+            # return randoms
+            return [self.db.select('image', order='image_id',
+                        offset='$id_', limit=1, vars=locals())[0]
+                        for id_ in sample(xrange(count_id), limit)]
 
     def get_all_new(self, limit=10):
         """最新图片
