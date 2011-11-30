@@ -31,7 +31,7 @@ $def with (content)
 
 <body>
     <style type="text/css">
-    #login{
+    #loglink{
         float: right;
     }
     body {
@@ -49,10 +49,13 @@ $def with (content)
 
 <div id="log">
     <a href="/"><img id="img-logo" src="/static/logo.png" title="logo-image" /></a>
-</div>
-<div id = "login">
-    <a href="/login/">登录</a>
-    <a href="/logout/">退出</a>
+    <div id = "loglink">
+        <a href="/upload/">上传图片</a>
+    $if logged_.logged():
+        <a href="/logout/">退出</a>
+    $else:
+        <a href="/login/">管理</a>
+    </div>
 </div>
 <div class="fixed"></div>
 

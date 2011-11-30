@@ -24,30 +24,39 @@ urls = (
         '/logout/', 'Logout', # 退出
         )
 
-# 模板
-render = web.template.render('templates', base='base')
+
 # web.config.debug = False
-# t_globals = {
-    # 'session': session,
-    # 'logged': logged(),
-# }
 
 app = web.application(urls, globals())
 
 # 调试模式下使用 session
 if web.config.get('_session') is None:
-    session = web.session.Session(app, web.session.DiskStore('sessions'), {'login': 0})
+    session = web.session.Session(app, web.session.DiskStore('sessions'),                                   initializer={'login': 0})
     web.config._session = session
 else:
     session = web.config._session
 
-def logged():
-    """根据 session 判断是否登录
+# AttributeError: 'ThreadedDict' object has no attribute 'login'
+# print session.login
+
+
+class Logged(object):
     """
-    if session.login == 1:
-        return True
-    else:
-        return False
+    """
+    def logged(self):
+        """根据 session 判断是否登录
+        """
+        if session.login == 1:
+            return True
+        else:
+            return False
+
+t_globals = {
+    'session': session,
+    'logged_': Logged(),
+}
+# 模板
+render = web.template.render('templates', base='base', globals=t_globals)
 
 
 class Index(object):
@@ -177,7 +186,7 @@ class Random(object):
         """
         random_id = ImageDB().get_random(limit=1)[0].image_id
         print random_id
-        web.seeother('/' + str(random_id) + '/')
+        raise web.seeother('/' + str(random_id) + '/')
 
 
 class Delete(object):
@@ -186,9 +195,11 @@ class Delete(object):
     def GET(self, image_id):
         """GET
         """
+        if not Logged().logged():
+            return web.unauthorized()
         ImageDB().delete_image(image_id)
-        # web.seeother('/' + str(image_id) + '/')
-        web.seeother('/')
+        # raise web.seeother('/' + str(image_id) + '/')
+        raise web.seeother('/')
 
 
 class Login(object):
@@ -197,21 +208,31 @@ class Login(object):
     def GET(self):
         """GET
         """
-        if logged():
-            web.seeother('/')
+        # 来源链接
+        # TODO 判断来源链接是否为当前站点，不是则跳到首页
+        referer = web.ctx.env.get('HTTP_REFERER', '/')
+        print referer
+        if Logged().logged():
+            if '/login/' in referer:
+                raise web.seeother('/')
+            else:
+                raise web.seeother(referer)
         else:
-            return render.login()
+            return render.login(referer)
 
     
     def POST(self):
         """POST method
         """
         user, passwd = web.input().user, web.input().passwd
+        # 来源链接
+        referer = web.input().referer
         ident = UserDB().verify_user(user, passwd)
         if ident:
             session.login = 1
-            web.seeother('/')
+            raise web.seeother(referer)
             # return 'ok'
+            
         else:
             # session.login = 0
             render.login()
@@ -224,7 +245,7 @@ class Logout(object):
     def GET(self):
         session.login=0
         session.kill()
-        web.seeother('/')
+        raise web.seeother('/')
 
 
 if __name__ == '__main__':

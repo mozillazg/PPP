@@ -2,8 +2,8 @@ $def with(image, next, more)
 
 <style type="text/css">
 
-#view-photo-main { float: left; width: 620px; text-align: left; margin: 5px 0pt 0pt; }
-#photo-controls { float: left;}
+#view-photo-main { float: left; width: 620px; text-align: left; margin: 5px 15px 0px 0px; }
+#photo-controls { float: right;}
 #view-photo-sidebar {float: left; text-align: left; width: 300px;}
 #photo {
     margin-bottom: 20px;
@@ -34,7 +34,9 @@ img#photo-display.photo-large {
                     <a href="/$before.image_id/">上一张</a> |
                 $if after:
                     <a href="/$after.image_id/">下一张</a> | 
-                <a href="/random/">随机美女</a> | <a href="/delete/image.image_id/">删除当前图片</a>
+                <a href="/random/">随机美女</a>
+                $if logged_.logged():
+                    | <a href="/delete/image.image_id/">删除当前图片</a>
             </div>
         </div>
         <div style="clear:both;"></div>
