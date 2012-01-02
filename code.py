@@ -227,15 +227,17 @@ class Login(object):
         user, passwd = web.input().user, web.input().passwd
         # 来源链接
         referer = web.input().referer
-        ident = UserDB().verify_user(user, passwd)
-        if ident:
-            session.login = 1
-            raise web.seeother(referer)
-            # return 'ok'
-            
+        if user and passwd:
+            try:
+                ident = UserDB().verify_user(user, passwd)
+                session.login = 1
+                raise web.seeother(referer)
+                # return 'ok'
+            except:
+                # session.login = 0
+                raise web.seeother('/login/')
         else:
-            # session.login = 0
-            render.login()
+            raise web.seeother('/login/')
 
 
 
