@@ -1,0 +1,8 @@
+$def with(message='')
+
+<form method="POST" action="">
+    输入图片ID：<input type="text" name="img-id" /><input type="button" name="del-img-button" value="删除" />
+</form>
+
+$if message:
+    $message
