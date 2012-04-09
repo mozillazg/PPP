@@ -31,7 +31,7 @@ app = web.application(urls, globals())
 
 # 调试模式下使用 session
 if web.config.get('_session') is None:
-    session = web.session.Session(app, web.session.DiskStore('sessions'),                                   initializer={'login': 0})
+    session = web.session.Session(app, web.session.DiskStore('sessions'), initializer={'login': 0})
     web.config._session = session
 else:
     session = web.config._session
