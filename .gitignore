@@ -1,2 +1,6 @@
 
-*.pyc
+/1/temp
+/1/sae
+/1/index.wsgi.space.py
+/1/templates/test.html
+/1/templates/404.html

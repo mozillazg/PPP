@@ -1,0 +1,86 @@
+$def with(news, hots, likes)
+
+<style type="text/css">
+
+#view-photo-main {
+    float: left;
+    width: 620px;
+    text-align: left;
+    margin: 5px 0pt 0pt;
+}
+.photo-main {
+  margin-bottom: 20px;
+}
+.image-list {
+    padding-top: 5px;
+    overflow: hidden;
+}
+.thumb {
+    display: table-cell;
+    vertical-align: middle;
+    float: left;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    margin: 5px 36px 10px 0px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+.thumb img {
+    vertical-align:middle;
+}
+
+</style>
+
+
+<div id="main">
+    <div id="view-photo-main">
+        <div class="photo-main-title">
+            最新图片 <a href="/random">随便看看</a>
+        </div>
+        <div class="fixed"></div>
+    <div class="photo-main">
+    <div class="image-list">
+    $for new in news:
+        <div class="thumb">
+            $ src = '/thumb/' + str(new.image_id)
+            <a href="/$new.image_id"><img src="$src" title="$src" /></a>
+        </div>
+    </div>
+    <div class="fixed"></div>
+    <div class="photo-main-title">
+            最热图片<a href="/random">随便看看</a>
+        </div>
+        <div class="fixed"></div>
+    <div class="photo-main">
+    <div class="image-list">
+    $for hot in hots:
+        <div class="thumb">
+        $ src = '/thumb/' + str(hot.image_id)
+            <a href="/$hot.image_id"><img src="$src" title="$src" /></a>
+        </div>
+    </div>
+    <div class="fixed"></div>
+        <div class="photo-main-title">
+            最受欢迎图片 <a href="/random">随便看看</a>
+        </div>
+        <div class="fixed"></div>
+        <div class="photo-main">
+    <div class="image-list">
+    $for like in likes:
+        <div class="thumb">
+        $ src = '/thumb/' + str(like.image_id)
+            <a href="/$like.image_id"><img src="$src" title="$src" /></a>
+        </div>
+    </div>
+    <div class="fixed"></div>
+
+    </div>
+    <div id="photo-side">
+
+    </div>
+</div>
+</div>
+</div>
+
